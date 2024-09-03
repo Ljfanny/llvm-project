@@ -1888,6 +1888,9 @@ private:
 
   ExprResult ParseFoldExpression(ExprResult LHS, BalancedDelimiterTracker &T);
 
+   // Jiefang:
+  ExprResult ParseCustomExpression(SourceLocation BeginLoc);
+
   //===--------------------------------------------------------------------===//
   // C++ Expressions
   ExprResult tryParseCXXIdExpression(CXXScopeSpec &SS, bool isAddressOfOperand,

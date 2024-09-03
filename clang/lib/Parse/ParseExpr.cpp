@@ -160,6 +160,11 @@ Parser::ParseExpressionWithLeadingExtension(SourceLocation ExtLoc) {
 
 /// Parse an expr that doesn't include (top-level) commas.
 ExprResult Parser::ParseAssignmentExpression(TypeCastState isTypeCast) {
+  // Jiefang:
+  if (Tok.is(tok::l_square) && NextToken().is(tok::l_square)){
+    return ParseCustomExpression();
+  }
+
   if (Tok.is(tok::code_completion)) {
     cutOffParsing();
     Actions.CodeCompleteExpression(getCurScope(),
@@ -3832,4 +3837,51 @@ ExprResult Parser::ParseAvailabilityCheckExpr(SourceLocation BeginLoc) {
 
   return Actions.ActOnObjCAvailabilityCheckExpr(AvailSpecs, BeginLoc,
                                                 Parens.getCloseLocation());
+}
+
+// Jiefang: support a new language construct -> [[ IntExpression, Expression, IntExpression ]]
+ExprResult Parser::ParseCustomExpression(SourceLocation BeginLoc) {
+  // Consume the '[['
+  ConsumeBracket();
+  ConsumeBracket();
+
+  // Parse the left IntExpression
+  ExprResult LeftIntExpr = ParseExpression();
+  if (FirstIntExpr.isInvalid()) {
+    SkipUntil(tok::r_square, StopAtSemi);
+    return ExprError();
+  }
+  if (ExpectAndConsume(tok::comma)) {
+    SkipUntil(tok::r_square, StopAtSemi);
+    return ExprError();
+  }
+
+  // Parse the main Expression
+  ExprResult MidExpr = ParseExpression();
+  if (MidExpr.isInvalid()) {
+    SkipUntil(tok::r_square, StopAtSemi);
+    return ExprError();
+  }
+  if (ExpectAndConsume(tok::comma)) {
+    SkipUntil(tok::r_square, StopAtSemi);
+    return ExprError();
+  }
+
+  // Parse the right IntExpression
+  ExprResult RightIntExpr = ParseExpression();
+  if (LastIntExpr.isInvalid()) {
+    SkipUntil(tok::r_square, StopAtSemi);
+    return ExprError();
+  }
+  if (Tok.is(tok::r_square) && NextToken().is(tok::r_square)) {
+    // Consume the ']]'
+    ConsumeBracket();
+    ConsumeBracket();
+    // Call the action to create the AST node for this expression.
+    return Actions.ActOnCustomExpr(BeginLoc, LeftIntExpr.get(), MidExpr.get(), RightIntExpr.get());
+  } else {
+    Diag(Tok, diag::err_expected) << tok::r_square;
+    return ExprError();
+  }
+  return ExprError();
 }

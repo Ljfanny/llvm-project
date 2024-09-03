@@ -2922,3 +2922,29 @@ llvm::Value *CodeGenFunction::emitBoolVecConversion(llvm::Value *SrcVec,
 
   return Builder.CreateShuffleVector(SrcVec, ShuffleMask, Name);
 }
+
+// Jiefang
+llvm::Value *CodeGenFunction::EmitCustomExpr(const CustomExpr *E) {
+  llvm::Value *leftValue = EmitScalarExpr(E->getLeftIntExpr());
+  llvm::Value *rightValue = EmitScalarExpr(E->getRightIntExpr());
+
+  llvm::BasicBlock *loopBB = createBasicBlock("loop");
+  llvm::BasicBlock *endBB = createBasicBlock("end");
+
+  EmitBlock(loopBB);
+
+  llvm::Value *midResult = EmitAnyExpr(E->getMidExpr());
+
+  llvm::Value *cond = Builder.CreateICmpEQ(leftValue, rightValue);
+
+  Builder.CreateCondBr(cond, endBB, loopBB);
+
+  if (!cond) {
+    leftValue = Builder.CreateAdd(leftValue, llvm::ConstantInt::get(leftValue->getType(), 1), "increment");
+    Builder.CreateBr(loopBB);
+  }
+
+  EmitBlock(endBB);
+
+  return midResult;
+}

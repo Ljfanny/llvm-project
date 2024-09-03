@@ -1621,6 +1621,28 @@ QualType Sema::UsualArithmeticConversions(ExprResult &LHS, ExprResult &RHS,
 //  Semantic Analysis for various Expression Types
 //===----------------------------------------------------------------------===//
 
+// Jiefang: Analyze [[ IntExpression Expression IntExpression ]] !!
+ExprResult Sema::ActOnCustomExpr(
+  SourceLocation BeginLoc, Expr *LeftExpr, Expr *MidExpr, Expr *RightExpr){
+    if (!LeftExpr->getType()->isIntegerType() || !RightExpr->getType()->isIntegerType()){
+      Diag(LeftExpr->getExprLoc(), diag::err_typecheck_expect_int_expr);
+      return ExprError();
+    }
+
+    llvm::APSInt LeftVal, RightVal;
+    if (!LeftExpr->EvaluateAsInt(LeftVal, Context) || !RightExpr->EvaluateAsInt(RightVal, Context)) {
+      Diag(LeftExpr->getExprLoc(), diag::err_typecheck_expect_int_expr);
+      return ExprError();
+    }
+
+    if (LeftVal > RightVal) {
+      Diag(LeftExpr->getExprLoc(), diag::err_typecheck_expect_less_equal)
+        << LeftExpr->getSourceRange()
+        << RightExpr->getSourceRange();
+      return ExprError();
+    }
+    return new (Context) CustomExpr(LeftExpr, MidExpr, RightExpr, MidExpr->getType());
+}
 
 ExprResult Sema::ActOnGenericSelectionExpr(
     SourceLocation KeyLoc, SourceLocation DefaultLoc, SourceLocation RParenLoc,

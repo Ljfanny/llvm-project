@@ -1142,6 +1142,48 @@ public:
 // Primary Expressions.
 //===----------------------------------------------------------------------===//
 
+// Jiefang: CustomExpr
+class CustomExpr : public Expr {
+  Stmt *LeftIntExpr;
+  Stmt *MidExpr;
+  Stmt *RightIntExpr;
+
+  public:
+  CustomExpr(Expr *LeftIntExpr, Expr *MidExpr, Expr *RightIntExpr, QualType Ty)
+    : Expr(CustomExprClass, Ty, VK_PRValue, OK_Ordinary),
+      LeftIntExpr(LeftIntExpr), MidExpr(MidExpr), RightIntExpr(RightIntExpr) {
+    setDependence(computeDependence(this));
+  }
+
+  // Setters.
+  void setLeftIntExpr(Expr *E) { LeftIntExpr = E; }
+  void setMidExpr(Expr *E) { MidExpr = E; }
+  void setRightIntExpr(Expr *E) { RightIntExpr = E; }
+  
+  // Getters.
+  Expr *getLeftIntExpr() const { return cast<Expr>(LeftIntExpr); }
+  Expr *getMidExpr() const { return cast<Expr>(MidExpr); }
+  Expr *getRightIntExpr() const { return cast<Expr>(RightIntExpr); }
+
+  SourceLocation getBeginLoc() const LLVM_READONLY { return LeftIntExpr->getBeginLoc(); }
+  SourceLocation getEndLoc() const LLVM_READONLY { return RightIntExpr->getEndLoc(); }=
+
+  static bool classof(const Stmt *T) {
+    return T->getStmtClass() == CustomExprClass;
+  }
+
+  // Iterators
+  child_range children() {
+    return child_range(child_iterator(&LeftIntExpr), child_iterator(&RightIntExpr + 1));
+  }
+  const_child_range children() const {
+    return const_child_range(
+        const_child_iterator(&LeftIntExpr),
+        const_child_iterator(&RightIntExpr + 1)
+    );
+  }
+}
+
 /// OpaqueValueExpr - An expression referring to an opaque object of a
 /// fixed type and value class.  These don't correspond to concrete
 /// syntax; instead they're used to express operations (usually copy

@@ -5670,6 +5670,12 @@ public:
   bool UseArgumentDependentLookup(const CXXScopeSpec &SS,
                                   const LookupResult &R,
                                   bool HasTrailingLParen);
+  
+  // Jiefang:
+  ExprResult ActOnCustomExpr(SourceLocation BeginLoc,
+                             Expr *LeftExpr,
+                             Expr *MidExpr,
+                             Expr *RightExpr);
 
   ExprResult
   BuildQualifiedDeclarationNameExpr(CXXScopeSpec &SS,

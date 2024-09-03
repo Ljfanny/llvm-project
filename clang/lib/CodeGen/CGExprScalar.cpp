@@ -5081,6 +5081,11 @@ Value *ScalarExprEmitter::VisitAtomicExpr(AtomicExpr *E) {
 Value *CodeGenFunction::EmitScalarExpr(const Expr *E, bool IgnoreResultAssign) {
   assert(E && hasScalarEvaluationKind(E->getType()) &&
          "Invalid scalar expression to emit");
+         
+  // Jiefang: IR entry
+  if (const CustomExpr *CE = dyn_cast<CustomExpr>(E)) {
+    return EmitCustomExpr(CE);
+  }
 
   return ScalarExprEmitter(*this, IgnoreResultAssign)
       .Visit(const_cast<Expr *>(E));

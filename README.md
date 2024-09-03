@@ -1,39 +1,45 @@
-# The LLVM Compiler Infrastructure
+# Custom Language Construct
 
-Welcome to the LLVM project!
+> Extend the C programming language to support a new language construct:
+> `[[ IntExpression, Expression, IntExpression ]]`
+>
+> Semantics:
+> Evaluate `Expression` and then check if the first and the last expressions are equal. If yes, then stop; otherwise increment the first expression by one and then repeat the steps.
 
-This repository contains the source code for LLVM, a toolkit for the
-construction of highly optimized compilers, optimizers, and run-time
-environments.
+NAME: Jiefang Lin
 
-The LLVM project has multiple components. The core of the project is
-itself called "LLVM". This contains all of the tools, libraries, and header
-files needed to process intermediate representations and convert them into
-object files. Tools include an assembler, disassembler, bitcode analyzer, and
-bitcode optimizer.
+EID: jl85223
 
-C-like languages use the [Clang](http://clang.llvm.org/) frontend. This
-component compiles C, C++, Objective-C, and Objective-C++ code into LLVM bitcode
--- and from there into object files, using LLVM.
+## Code Modifications
 
-Other components include:
-the [libc++ C++ standard library](https://libcxx.llvm.org),
-the [LLD linker](https://lld.llvm.org), and more.
+### 1. Parser Integration
 
-## Getting the Source Code and Building LLVM
+- Modified the parser to recognize the `[[ IntExpression, Expression, IntExpression ]]` syntax.
 
-Consult the
-[Getting Started with LLVM](https://llvm.org/docs/GettingStarted.html#getting-the-source-code-and-building-llvm)
-page for information on building and running LLVM.
+  The modified source file is `clang/lib/Parse/ParseExpr.cpp` and the newly implemented method is `ExprResult Parser::ParseCustomExpression(SourceLocation BeginLoc)`.
 
-For information on how to contribute to the LLVM project, please take a look at
-the [Contributing to LLVM](https://llvm.org/docs/Contributing.html) guide.
+- Constructed a `CustomExpr` node in the Abstract Syntax Tree (AST).
 
-## Getting in touch
+  The modified source file is `clang/include/clang/AST/Expr.h` and the newly implemented class is `CustomExpr`.
 
-Join the [LLVM Discourse forums](https://discourse.llvm.org/), [Discord
-chat](https://discord.gg/xS7Z362), or #llvm IRC channel on
-[OFTC](https://oftc.net/).
+### 2. Semantic Analysis
 
-The LLVM project has adopted a [code of conduct](https://llvm.org/docs/CodeOfConduct.html) for
-participants to all modes of communication within the project.
+- Implemented the semantic checking in `clang/lib/Sema/SemaExpr.cpp` through the `ExprResult Sema::ActOnCustomExpr(SourceLocation BeginLoc, Expr *LeftExpr, Expr *MidExpr, Expr *RightExpr)` function.
+
+  This function checks that both `IntExpression` expressions are of integer type and that the first integer is less than or equal to the second.
+
+### 3. Code Generation
+
+- Implemented the LLVM IR generation logic in `clang/lib/CodeGen/CodeGenFunction.cpp` to emit the correct IR for the custom expression.
+
+- The `EmitCustomExpr` function generates a loop structure that repeatedly evaluates the `Expression` until the first and last expressions are equal.
+
+  This function is called in `EmitScalarExpr` method from `clang/lib/CodeGen/CGExprScalar.cpp`.
+
+### 4. Testing
+
+Created some test cases to validate the implementation of the new construct.
+
+## Compilation and Execution
+
+A simple script `s.sh` is provided to compile and execute the test files.
