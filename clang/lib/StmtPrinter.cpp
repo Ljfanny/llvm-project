@@ -160,6 +160,9 @@ namespace {
 
     void VisitCXXNamedCastExpr(CXXNamedCastExpr *Node);
 
+    // Jiefang
+    void VisitCustomExpr(CustomExpr *Node);
+
 #define ABSTRACT_STMT(CLASS)
 #define STMT(CLASS, PARENT) \
     void Visit##CLASS(CLASS *Node);
