@@ -2236,9 +2236,6 @@ void StmtProfiler::VisitCXXFoldExpr(const CXXFoldExpr *S) {
 // Jiefang:
 void StmtProfiler::VisitCustomExpr(const CustomExpr *S) {
   VisitExpr(S);
-  if (S->hasSomeCustomType()) {
-    VisitType(S->getCustomType());
-  }
 }
 
 void StmtProfiler::VisitCXXParenListInitExpr(const CXXParenListInitExpr *S) {
