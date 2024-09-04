@@ -56,6 +56,8 @@ def CoreturnStmt : StmtNode<Stmt>;
 
 // Expressions
 def Expr : StmtNode<ValueStmt, 1>;
+// Jiefang
+def CustomExpr : StmtNode<Expr>;
 def PredefinedExpr : StmtNode<Expr>;
 def SYCLUniqueStableNameExpr : StmtNode<Expr>;
 def DeclRefExpr : StmtNode<Expr>;

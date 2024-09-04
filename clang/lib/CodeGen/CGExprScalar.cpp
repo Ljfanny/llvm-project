@@ -229,6 +229,31 @@ public:
   //                               Utilities
   //===--------------------------------------------------------------------===//
 
+  // Jiefang:
+  Value *EmitCustomExpr(const CustomExpr *E) {
+    llvm::Value *leftValue = CGF.EmitScalarExpr(E->getLeftIntExpr());
+    llvm::Value *rightValue = CGF.EmitScalarExpr(E->getRightIntExpr());
+
+    llvm::BasicBlock *loopBB = CGF.createBasicBlock("loop");
+    llvm::BasicBlock *endBB = CGF.createBasicBlock("end");
+
+    CGF.EmitBlock(loopBB);
+
+    llvm::Value *midResult = CGF.EmitAnyExpr(E->getMidExpr()).getScalarVal();
+
+    llvm::Value *cond = Builder.CreateICmpEQ(leftValue, rightValue);
+
+    Builder.CreateCondBr(cond, endBB, loopBB);
+
+    if (!cond) {
+      leftValue = Builder.CreateAdd(leftValue, llvm::ConstantInt::get(leftValue->getType(), 1), "increment");
+      Builder.CreateBr(loopBB);
+    }
+
+    CGF.EmitBlock(endBB);
+    return midResult;
+  }
+
   bool TestAndClearIgnoreResultAssign() {
     bool I = IgnoreResultAssign;
     IgnoreResultAssign = false;

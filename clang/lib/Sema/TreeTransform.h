@@ -2608,6 +2608,15 @@ public:
     return getSema().BuildPredefinedExpr(Loc, IK);
   }
 
+  // Jiefang
+  ExprResult RebuildCustomExpr(Expr *LeftExpr, Expr *MidExpr, Expr *RightExpr) {
+    if (!LeftExpr || !MidExpr || !RightExpr) {
+      return ExprError();
+    }
+    QualType ResultType = MidExpr->getType();
+    return new (getSema().Context) CustomExpr(LeftExpr, MidExpr, RightExpr, ResultType);
+  }
+
   /// Build a new expression that references a declaration.
   ///
   /// By default, performs semantic analysis to build the new expression.
@@ -15337,6 +15346,27 @@ TreeTransform<Derived>::TransformCapturedStmt(CapturedStmt *S) {
   }
 
   return getSema().ActOnCapturedRegionEnd(Body.get());
+}
+
+// Jiefang
+template<typename Derived>
+ExprResult
+TreeTransform<Derived>::TransformCustomExpr(CustomExpr *E) {
+  ExprResult Left = getDerived().TransformExpr(E->getLeftIntExpr());
+  if (Left.isInvalid()) {
+    return ExprError();
+  }
+  ExprResult Mid = getDerived().TransformExpr(E->getMidExpr());
+  if (Mid.isInvalid()) {
+    return ExprError();
+  }
+
+  ExprResult Right = getDerived().TransformExpr(E->getRightIntExpr());
+  if (Right.isInvalid()) {
+    return ExprError();
+  }
+
+  return getDerived().RebuildCustomExpr(Left.get(), Mid.get(), Right.get());
 }
 
 } // end namespace clang

@@ -1155,6 +1155,9 @@ class CustomExpr : public Expr {
     setDependence(computeDependence(this));
   }
 
+  CustomExpr(EmptyShell Empty)
+    : Expr(CustomExprClass, Empty) {}
+
   // Setters.
   void setLeftIntExpr(Expr *E) { LeftIntExpr = E; }
   void setMidExpr(Expr *E) { MidExpr = E; }
@@ -1166,7 +1169,7 @@ class CustomExpr : public Expr {
   Expr *getRightIntExpr() const { return cast<Expr>(RightIntExpr); }
 
   SourceLocation getBeginLoc() const LLVM_READONLY { return LeftIntExpr->getBeginLoc(); }
-  SourceLocation getEndLoc() const LLVM_READONLY { return RightIntExpr->getEndLoc(); }=
+  SourceLocation getEndLoc() const LLVM_READONLY { return RightIntExpr->getEndLoc(); }
 
   static bool classof(const Stmt *T) {
     return T->getStmtClass() == CustomExprClass;
@@ -1182,7 +1185,7 @@ class CustomExpr : public Expr {
         const_child_iterator(&RightIntExpr + 1)
     );
   }
-}
+};
 
 /// OpaqueValueExpr - An expression referring to an opaque object of a
 /// fixed type and value class.  These don't correspond to concrete

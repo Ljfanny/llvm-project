@@ -908,3 +908,12 @@ ExprDependence clang::computeDependence(ObjCMessageExpr *E) {
     D |= A->getDependence();
   return D;
 }
+
+// Jiefang:
+ExprDependence clang::computeDependence(CustomExpr *E) {
+  auto D = ExprDependence::None;
+  D |= E->getLeftIntExpr()->getDependence();
+  D |= E->getMidExpr()->getDependence();
+  D |= E->getRightIntExpr()->getDependence();
+  return D;
+}

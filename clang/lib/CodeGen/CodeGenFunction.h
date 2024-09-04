@@ -4044,6 +4044,9 @@ public:
   //                         Scalar Expression Emission
   //===--------------------------------------------------------------------===//
 
+  // Jiefang:
+  llvm::Value *EmitCustomExpr(const CustomExpr *E);
+  
   /// EmitCall - Generate a call of the given function, expecting the given
   /// result type, and using the given argument list which specifies both the
   /// LLVM arguments and the types they were derived from.

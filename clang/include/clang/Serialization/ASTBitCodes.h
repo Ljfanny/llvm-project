@@ -1914,6 +1914,9 @@ enum StmtCode {
   EXPR_CONCEPT_SPECIALIZATION,            // ConceptSpecializationExpr
   EXPR_REQUIRES,                          // RequiresExpr
 
+  // Jiefang
+  EXPR_CUSTOM,
+
   // CUDA
   EXPR_CUDA_KERNEL_CALL, // CUDAKernelCallExpr
 

@@ -1573,6 +1573,15 @@ void ASTStmtWriter::VisitMSDependentExistsStmt(MSDependentExistsStmt *S) {
   Code = serialization::STMT_MS_DEPENDENT_EXISTS;
 }
 
+// Jiefang
+void ASTStmtWriter::VisitCustomExpr(CustomExpr *E) {
+  VisitExpr(E);
+  Record.AddStmt(E->getLeftIntExpr());
+  Record.AddStmt(E->getMidExpr());
+  Record.AddStmt(E->getRightIntExpr());
+  Code = serialization::EXPR_CUSTOM;
+}
+
 void ASTStmtWriter::VisitCXXOperatorCallExpr(CXXOperatorCallExpr *E) {
   VisitCallExpr(E);
   Record.push_back(E->getOperator());

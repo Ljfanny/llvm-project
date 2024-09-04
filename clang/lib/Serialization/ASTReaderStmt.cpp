@@ -531,6 +531,15 @@ void ASTStmtReader::VisitExpr(Expr *E) {
          "Incorrect expression field count");
 }
 
+// Jiefang:
+void ASTStmtReader::VisitCustomExpr(CustomExpr *E) {
+  VisitStmt(E);
+
+  E->setLeftIntExpr(Record.readSubExpr());
+  E->setMidExpr(Record.readSubExpr());
+  E->setRightIntExpr(Record.readSubExpr());
+}
+
 void ASTStmtReader::VisitConstantExpr(ConstantExpr *E) {
   VisitExpr(E);
 
@@ -4065,6 +4074,12 @@ Stmt *ASTReader::ReadStmtFromStream(ModuleFile &F) {
       S = new (Context) DependentCoawaitExpr(Empty);
       break;
 
+    // Jiefang:
+    case EXPR_CUSTOM: {
+      S = new (Context) CustomExpr(Empty);
+      break;
+    }
+    
     case EXPR_CONCEPT_SPECIALIZATION: {
       S = new (Context) ConceptSpecializationExpr(Empty);
       break;

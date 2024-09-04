@@ -106,6 +106,9 @@ class ObjCSubscriptRefExpr;
 class ObjCIsaExpr;
 class ObjCIndirectCopyRestoreExpr;
 class ObjCMessageExpr;
+// Jiefang
+class CustomExpr;
+ExprDependence computeDependence(CustomExpr *E);
 
 // The following functions are called from constructors of `Expr`, so they
 // should not access anything beyond basic
@@ -201,6 +204,8 @@ ExprDependence computeDependence(ObjCSubscriptRefExpr *E);
 ExprDependence computeDependence(ObjCIsaExpr *E);
 ExprDependence computeDependence(ObjCIndirectCopyRestoreExpr *E);
 ExprDependence computeDependence(ObjCMessageExpr *E);
+// Jiefang:
+ExprDependence computeDependence(CustomExpr *E);
 
 } // namespace clang
 #endif

@@ -3875,6 +3875,23 @@ bool RecursiveASTVisitor<Derived>::VisitOMPDoacrossClause(
   return true;
 }
 
+// Jiefang:
+template <typename Derived>
+bool RecursiveASTVisitor<Derived>::TraverseCustomExpr(CustomExpr *S, DataRecursionQueue *Queue) {
+    if (!getDerived().shouldTraversePostOrder()) {
+        TRY_TO(TraverseStmt(S->getLeftIntExpr()));
+        TRY_TO(TraverseStmt(S->getMidExpr()));
+        TRY_TO(TraverseStmt(S->getRightIntExpr()));
+    }
+    TRY_TO(WalkUpFromCustomExpr(S));
+    if (getDerived().shouldTraversePostOrder()) {
+        TRY_TO(TraverseStmt(S->getLeftIntExpr()));
+        TRY_TO(TraverseStmt(S->getMidExpr()));
+        TRY_TO(TraverseStmt(S->getRightIntExpr()));
+    }
+    return true;
+}
+
 // FIXME: look at the following tricky-seeming exprs to see if we
 // need to recurse on anything.  These are ones that have methods
 // returning decls or qualtypes or nestednamespecifier -- though I'm

@@ -26,7 +26,7 @@ EID: jl85223
 
 - Implemented the semantic checking in `clang/lib/Sema/SemaExpr.cpp` through the `ExprResult Sema::ActOnCustomExpr(SourceLocation BeginLoc, Expr *LeftExpr, Expr *MidExpr, Expr *RightExpr)` function.
 
-  This function checks that both `IntExpression` expressions are of integer type and that the first integer is less than or equal to the second.
+  This function checks that both `IntExpression` expressions are of integer type.
 
 ### 3. Code Generation
 

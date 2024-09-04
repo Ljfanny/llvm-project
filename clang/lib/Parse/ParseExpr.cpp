@@ -162,7 +162,7 @@ Parser::ParseExpressionWithLeadingExtension(SourceLocation ExtLoc) {
 ExprResult Parser::ParseAssignmentExpression(TypeCastState isTypeCast) {
   // Jiefang:
   if (Tok.is(tok::l_square) && NextToken().is(tok::l_square)){
-    return ParseCustomExpression();
+    return ParseCustomExpression(Tok.getLocation());
   }
 
   if (Tok.is(tok::code_completion)) {
@@ -3847,7 +3847,7 @@ ExprResult Parser::ParseCustomExpression(SourceLocation BeginLoc) {
 
   // Parse the left IntExpression
   ExprResult LeftIntExpr = ParseExpression();
-  if (FirstIntExpr.isInvalid()) {
+  if (LeftIntExpr.isInvalid()) {
     SkipUntil(tok::r_square, StopAtSemi);
     return ExprError();
   }
@@ -3869,7 +3869,7 @@ ExprResult Parser::ParseCustomExpression(SourceLocation BeginLoc) {
 
   // Parse the right IntExpression
   ExprResult RightIntExpr = ParseExpression();
-  if (LastIntExpr.isInvalid()) {
+  if (RightIntExpr.isInvalid()) {
     SkipUntil(tok::r_square, StopAtSemi);
     return ExprError();
   }

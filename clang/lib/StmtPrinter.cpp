@@ -1134,6 +1134,16 @@ void StmtPrinter::VisitOMPTargetParallelGenericLoopDirective(
 //===----------------------------------------------------------------------===//
 
 // Jiefang:
+void StmtPrinter::VisitCustomExpr(CustomExpr *Node) {
+  OS << "[[ ";
+  Node->getLeftIntExpr()->printPretty(OS, nullptr, Policy);
+  OS << ", ";
+  Node->getMidExpr()->printPretty(OS, nullptr, Policy);
+  OS << ", ";
+  Node->getRightIntExpr()->printPretty(OS, nullptr, Policy);
+  OS << " ]]";
+}
+
 
 void StmtPrinter::VisitSourceLocExpr(SourceLocExpr *Node) {
   OS << Node->getBuiltinStr() << "()";
