@@ -10,6 +10,10 @@ NAME: Jiefang Lin
 
 EID: jl85223
 
+*I chose LLVM version 17.0.1, with the corresponding commit ID **e19b7dc**.*
+
+*I'm sorry that I wasn't able to successfully compile the new feature, but I made a strong effort to implement it.*
+
 ## Code Modifications
 
 ### 1. Parser Integration
@@ -39,6 +43,8 @@ EID: jl85223
 ### 4. Testing
 
 Created some test cases to validate the implementation of the new construct.
+
+The test cases are located in the `test` folder.
 
 ## Compilation and Execution
 

@@ -2233,6 +2233,14 @@ void StmtProfiler::VisitCXXFoldExpr(const CXXFoldExpr *S) {
   ID.AddInteger(S->getOperator());
 }
 
+// Jiefang:
+void StmtProfiler::VisitCustomExpr(const CustomExpr *S) {
+  VisitExpr(S);
+  if (S->hasSomeCustomType()) {
+    VisitType(S->getCustomType());
+  }
+}
+
 void StmtProfiler::VisitCXXParenListInitExpr(const CXXParenListInitExpr *S) {
   VisitExpr(S);
 }
